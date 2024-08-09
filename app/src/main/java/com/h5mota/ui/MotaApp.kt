@@ -153,11 +153,12 @@ private fun checkSiteBackup(onChange: (String) -> Unit) {
             }
             val domains = getBackupDomains()
             for (domain in domains) {
-                if (!checkDomainAvailable((domain))) {
+                if (checkDomainAvailable((domain))) {
                     availableDomain = domain
                 }
-                break
+                return@Thread;
             }
+            availableDomain = Constant.PRESS_DOMAIN
         }.start()
     }
     if (availableDomain != Constant.DOMAIN) {

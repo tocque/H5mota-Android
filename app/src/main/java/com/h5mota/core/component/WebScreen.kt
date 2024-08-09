@@ -269,7 +269,11 @@ fun WebScreen(url: String, onUrlLoaded: ((String?) -> Unit)? = null) {
         }
         
         LaunchedEffect(url) {
-            navigator.loadUrl(url)
+            activity.webScreenLifeCycleHook.view?.apply {
+                clearCache(true)
+                loadUrl("about:blank")
+                loadUrl(url)
+            }
         }
 
         WebView(
