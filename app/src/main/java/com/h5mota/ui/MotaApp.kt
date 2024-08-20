@@ -32,15 +32,17 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.h5mota.BuildConfig
 import com.h5mota.MainActivity
+import com.h5mota.core.base.Constant
 import com.h5mota.core.component.MotaNavigationBar
 import com.h5mota.core.component.MotaNavigationBarItem
 import com.h5mota.core.component.MotaNavigationRail
 import com.h5mota.core.component.MotaNavigationRailItem
-import com.h5mota.ui.Constant.APK_FILE
+import com.h5mota.core.base.Constant.APK_FILE
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONObject
+import useHttpClientBuilder
 import java.io.File
 
 
@@ -96,8 +98,7 @@ fun MotaApp(
 
 private fun checkDomainAvailable(domain: String): Boolean {
     val result = runCatching {
-        val okHttpClient = OkHttpClient()
-            .newBuilder()
+        val okHttpClient = useHttpClientBuilder()
             .followRedirects(true)
             .followSslRedirects(true)
             .build()
@@ -117,8 +118,7 @@ private fun checkDomainAvailable(domain: String): Boolean {
 
 private fun getBackupDomains(): List<String> {
     val result = runCatching {
-        val okHttpClient = OkHttpClient()
-            .newBuilder()
+        val okHttpClient = useHttpClientBuilder()
             .followRedirects(true)
             .followSslRedirects(true)
             .build()
@@ -149,6 +149,10 @@ private fun checkSiteBackup(onChange: (String) -> Unit) {
         threadStarted = true
         Thread {
             if (checkDomainAvailable(Constant.DOMAIN)) {
+                return@Thread;
+            }
+            Constant.changeProxyUsage(true)
+            if (checkDomainAvailable((Constant.DOMAIN))) {
                 return@Thread;
             }
             val domains = getBackupDomains()
